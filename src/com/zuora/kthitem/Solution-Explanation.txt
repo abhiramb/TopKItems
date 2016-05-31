@@ -1,0 +1,31 @@
+Here is a brief explanation of my solution:
+
+I've made one assumption - All the user logs are sorted by timestamp
+
+FrequencyCounter.java is the naive solution
+It contains 2 maps - one holds a hash of the user and the page(s) accessed (user, page(s)) and another holds a hash of the page sequence
+triplet and its frequency. On reading the data from the weblog, I read the data into the first hash and construct the sequence. If I
+see a triplet, I refresh the page access history and add the sequence to the page triplet frequency.
+
+Then I read the page triplet hash and get the top 2 most accessed sequences.
+
+This is clearly not optimal. Its not memory efficient or space efficient. QueuedFrequentItem.java is my new solution
+
+My improvement was to create a queue of a fixed size and read the
+user history into the queue. I still maintain 2 hashes, one for the log history and one more for the sequence triplet.
+
+But I am clearing the queue, based on the fixed capacity set, which can be tuned with regards to the size of the weblog.
+I also rotate the users to the head of the queue so that we get the more active users up front and clear out the less frequent users again
+per capacity.
+
+This scales better when we have weblogs coming in from different machines and the queue can read different log files. Its a simple improvement
+to also have a timestamp by which we can clear the queue (least recently accessed) and maintain a fixed size on the queue.
+
+On exteremly large load it might be useful to have partitioned queues where each queue of capacity n holds a threshold frequency -
+say Q(n) might hold frequency of above 2, Q(n/2) might might hold frequency of above 4, Q(n/4) might hold a frequency of above 8 and so on.
+
+Errata:
+
+weblog.txt holds the data I read from.
+
+
